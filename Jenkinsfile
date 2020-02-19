@@ -15,14 +15,14 @@ pipeline {
         echo 'test'
       }
     }
-    stage('deploy') {
+    stage('build docker images') {
       steps {
         script {
           dockerImage = docker.build registry + ":$BUILD_NUMBER"
         }
       }
     }
-    stage('test') {
+    stage('push images') {
       steps {
         script {
           docker.withRegistry( '', registryCredential ) {
