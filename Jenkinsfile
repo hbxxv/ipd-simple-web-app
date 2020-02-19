@@ -1,7 +1,7 @@
 pipeline {
   environment {
     registry = "hbhagask/ipd-simple-web-app"
-    registryCredential = ‘dockerhub’
+    registryCredential = 'dockerhub'
   }
   agent { docker { image 'python:3.7.2' } }
   stages {
