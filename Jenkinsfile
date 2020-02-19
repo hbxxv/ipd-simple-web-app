@@ -1,4 +1,8 @@
 pipeline {
+  environment {
+    registry = "hbhagask/ipd-simple-web-app"
+    registryCredential = ‘dockerhub’
+  }
   agent { docker { image 'python:3.7.2' } }
   stages {
     stage('build') {
@@ -10,11 +14,27 @@ pipeline {
       steps {
         echo 'test'
       }
-      post {
-        always {
-          echo 'sucsess'
-        }
-      }    
     }
+    stage('deploy') {
+      steps {
+        script {
+          dockerImage = docker.build registry + ":$BUILD_NUMBER"
+        }
+      }
+    }
+    stage('test') {
+      steps {
+        script {
+          docker.withRegistry( '', registryCredential ) {
+            dockerImage.push()
+          }
+        }
+      }
+    }
+    stage('remove unused images') {
+      steps{
+        sh "docker rmi $registry:$BUILD_NUMBER"
+      }
+    }   
   }
 }
